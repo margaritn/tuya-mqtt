@@ -89,6 +89,9 @@ const main = async() => {
     if (typeof CONFIG.retain == 'undefined') {
         CONFIG.retain = false
     }
+    if (typeof CONFIG.protocol == 'undefined') {
+        CONFIG.protocol = 'mqtt'
+    }
 
     try {
         configDevices = fs.readFileSync('./devices.conf', 'utf8')
@@ -107,8 +110,10 @@ const main = async() => {
     mqttClient = mqtt.connect({
         host: CONFIG.host,
         port: CONFIG.port,
+        protocol: CONFIG.protocol,
         username: CONFIG.mqtt_user,
         password: CONFIG.mqtt_pass,
+        ca: [fs.readFileSync('/etc/ssl/certs/ca-certificates.crt')], // seems like not necessary (there is a default probably)
     })
 
     mqttClient.on('connect', function (err) {
